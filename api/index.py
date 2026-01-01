@@ -7,13 +7,24 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-@app.route('/api/jira/webhook', methods=['POST'])
+
+@app.route('/', methods=['GET'])
+def root():
+    return jsonify({
+        "service": "Jira Webhook API",
+        "endpoints": {
+            "webhook": "POST /jira/webhook",
+            "health": "GET /health"
+        }
+    }), 200
+
+
+@app.route('/jira/webhook', methods=['POST'])
 def receive_jira_issue():
     """Endpoint to receive Jira issue data"""
     
     data = request.json
     
-    # Log the received data (visible in Vercel logs)
     print(f"🎫 JIRA ISSUE RECEIVED at {datetime.now()}")
     
     if 'issueKey' in data:
@@ -33,19 +44,12 @@ def receive_jira_issue():
     }), 200
 
 
-@app.route('/api/health', methods=['GET'])
+@app.route('/health', methods=['GET'])
 def health_check():
     """Health check endpoint"""
     return jsonify({"status": "healthy"}), 200
 
 
-# Root endpoint
-@app.route('/api', methods=['GET'])
-def root():
-    return jsonify({
-        "service": "Jira Webhook API",
-        "endpoints": {
-            "webhook": "POST /api/jira/webhook",
-            "health": "GET /api/health"
-        }
-    }), 200
+# Required for Vercel
+if __name__ == '__main__':
+    app.run(debug=True)
