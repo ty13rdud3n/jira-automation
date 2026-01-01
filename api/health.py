@@ -7,11 +7,5 @@ class handler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
-        response = {
-            "service": "Jira Webhook API",
-            "endpoints": {
-                "webhook": "POST /api/jira/webhook",
-                "health": "GET /api/health"
-            }
-        }
+        response = {"status": "healthy"}
         self.wfile.write(json.dumps(response).encode('utf-8'))
